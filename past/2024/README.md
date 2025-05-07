@@ -187,7 +187,7 @@ forge test --match-contract SASHAToken_exp -vvv
 ---
 
 
-### 20241010 HYDT - Oracle Price Manipulation
+### 20241006 HYDT - Oracle Price Manipulation
 
 ### Total Lost : 5.8k USDT
 
