@@ -1238,7 +1238,7 @@ If you appreciate our work, please consider donating. Even a small amount helps 
 
 ### 20250511 x
 
-### Lost: ~2.16MBUSD
+### Lost: ~2.16M BUSD
 
 ```sh
 forge test --contracts ./src/test/2025-05/MBUToken_exp.sol -vvv
