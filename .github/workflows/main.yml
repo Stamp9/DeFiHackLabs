@@ -1,0 +1,24 @@
+name: Check LOST format in README
+
+on:
+  pull_request:
+    paths:
+      - 'README.md'
+
+jobs:
+  check-lost-format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Validate LOST lines in README.md
+        run: |
+          if grep -Eiq 'LOST:\s\d{1,3}(,\d{3})*(\.\d+)?\s[A-Za-z]{2,5}' README.md; then
+          echo "✅ LOST format is valid in README.md"
+          else
+          echo "❌ LOST line is incorrectly formatted."
+          echo "Expected format examples: LOST: 1,000 USD | LOST: 5,000.75 eth"
+          echo "1. Use '.' for decimals  2. Use ',' as a thousand separator  3. Include currency codes"
+          exit 1
+          fi
