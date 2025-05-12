@@ -12,6 +12,64 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Run LOST format test harness
+        run: |
+          echo "🧪 Running test harness using test-cases.txt..."
+
+          TEST_FILE="test-cases.txt"
+
+          if [ ! -f "$TEST_FILE" ]; then
+            echo "❌ test-cases.txt not found!"
+            exit 1
+          fi
+
+          VALID_REGEX='^LOST:\s~?((\d{1,3}(,\d{3})+)|(\d+(\.\d+)?[KMB]?))\s[A-Za-z]{2,5}$'
+
+          echo ""
+          echo "📋 Test Results:"
+          echo "------------------------"
+
+          FAIL_COUNT=0
+
+          while IFS= read -r line; do
+            trimmed=$(echo "$line" | xargs)
+            if [[ -z "$trimmed" || "$trimmed" == \#* ]]; then
+              continue  # skip empty lines or comments
+            fi
+
+            if echo "$trimmed" | grep -Eq "$VALID_REGEX"; then
+              case "$trimmed" in
+                "LOST: 1000USD"|"LOST: 1.000,50 USD"|"LOST: ~2.5million USD"|"LOST: 500 usdollars"|"LOST: 1200"|"LOST: 1,000"|"Lost: 1,000 usd"|"LOST: ~1.2K"|"LOSS: 1,000 USD"|"LOST: 5,00.25 ETH")
+                  echo "❌ FAIL (should not pass): $trimmed"
+                  FAIL_COUNT=$((FAIL_COUNT+1))
+                  ;;
+                *)
+                  echo "✅ PASS: $trimmed"
+                  ;;
+              esac
+            else
+              case "$trimmed" in
+                "LOST: 1,000 USD"|"LOST: 5,000.25 ETH"|"LOST: ~2.16M BUSD"|"LOST: 8K usd"|"LOST: 12.5B EUR"|"LOST: ~3,000 BTC"|"LOST: 1,200.00 DAI")
+                  echo "❌ FAIL (should have passed): $trimmed"
+                  FAIL_COUNT=$((FAIL_COUNT+1))
+                  ;;
+                *)
+                  echo "✅ Correctly rejected: $trimmed"
+                  ;;
+              esac
+            fi
+          done < "$TEST_FILE"
+
+          if [ "$FAIL_COUNT" -gt 0 ]; then
+            echo ""
+            echo "🚫 $FAIL_COUNT test case(s) failed validation."
+            exit 1
+          else
+            echo ""
+            echo "🎉 All test cases passed!"
+          fi
+
+
       - name: Validate LOST lines in README.md
         run: |
           echo "🔍 Checking LOST lines in README.md..."
