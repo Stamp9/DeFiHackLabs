@@ -1257,8 +1257,20 @@ https://x.com/CertiKAlert/status/1921483904483000457
 
 ---
 
+### 20250526 test - Price Manipulation
+
+### Lost: 15114BUSD
 
 
+```sh
+xx```
+#### Contract
+xx
+
+### Link reference
+
+xx
+---
 
 ### 20250426 Lifeprotocol - Price Manipulation
 
