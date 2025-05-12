@@ -1236,6 +1236,20 @@ If you appreciate our work, please consider donating. Even a small amount helps 
 ### List of DeFi Hacks & POCs
 
 
+### 20250511 x
+
+### Lost: ~2.16MBUSD
+
+```sh
+forge test --contracts ./src/test/2025-05/MBUToken_exp.sol -vvv
+```
+
+#### Contract
+[MBUToken_exp.sol](src/test/2025-05/MBUToken_exp.sol)
+
+### Link reference
+
+x
 
 
 ### 20250511 MBUToken - Price Manipulation not confirmed
