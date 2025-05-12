@@ -1236,6 +1236,7 @@ If you appreciate our work, please consider donating. Even a small amount helps 
 ### List of DeFi Hacks & POCs
 
 
+### Lost: ~2.16M BUSD
 
 
 ### 20250511 MBUToken - Price Manipulation not confirmed
