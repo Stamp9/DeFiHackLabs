@@ -1252,8 +1252,7 @@ forge test --contracts ./src/test/2025-05/MBUToken_exp.sol -vvv
 
 ### Link reference
 
-x
-
+### Lost: ~2.16M BUSD
 
 ### 20250511 MBUToken - Price Manipulation not confirmed
 

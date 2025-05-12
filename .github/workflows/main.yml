@@ -12,13 +12,104 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Run LOST format test harness
+        run: |
+          echo "🧪 Running test harness using test-cases.txt..."
+
+          TEST_FILE="test-cases.txt"
+
+          if [ ! -f "$TEST_FILE" ]; then
+            echo "❌ test-cases.txt not found!"
+            exit 1
+          fi
+
+          VALID_REGEX='^LOST:\s~?((\d{1,3}(,\d{3})+)|(\d+(\.\d+)?[KMB]?))\s[A-Za-z]{2,5}$'
+
+          echo ""
+          echo "📋 Test Results:"
+          echo "------------------------"
+
+          FAIL_COUNT=0
+
+          while IFS= read -r line; do
+            trimmed=$(echo "$line" | xargs)
+            if [[ -z "$trimmed" || "$trimmed" == \#* ]]; then
+              continue  # skip empty lines or comments
+            fi
+
+            if echo "$trimmed" | grep -Eq "$VALID_REGEX"; then
+              case "$trimmed" in
+                "LOST: 1000USD"|"LOST: 1.000,50 USD"|"LOST: ~2.5million USD"|"LOST: 500 usdollars"|"LOST: 1200"|"LOST: 1,000"|"Lost: 1,000 usd"|"LOST: ~1.2K"|"LOSS: 1,000 USD"|"LOST: 5,00.25 ETH")
+                  echo "❌ FAIL (should not pass): $trimmed"
+                  FAIL_COUNT=$((FAIL_COUNT+1))
+                  ;;
+                *)
+                  echo "✅ PASS: $trimmed"
+                  ;;
+              esac
+            else
+              case "$trimmed" in
+                "LOST: 1,000 USD"|"LOST: 5,000.25 ETH"|"LOST: ~2.16M BUSD"|"LOST: 8K usd"|"LOST: 12.5B EUR"|"LOST: ~3,000 BTC"|"LOST: 1,200.00 DAI")
+                  echo "❌ FAIL (should have passed): $trimmed"
+                  FAIL_COUNT=$((FAIL_COUNT+1))
+                  ;;
+                *)
+                  echo "✅ Correctly rejected: $trimmed"
+                  ;;
+              esac
+            fi
+          done < "$TEST_FILE"
+
+          if [ "$FAIL_COUNT" -gt 0 ]; then
+            echo ""
+            echo "🚫 $FAIL_COUNT test case(s) failed validation."
+            exit 1
+          else
+            echo ""
+            echo "🎉 All test cases passed!"
+          fi
+
+
       - name: Validate LOST lines in README.md
         run: |
-          if grep -Eiq 'LOST:\s\d{1,3}(,\d{3})*(\.\d+)?\s[A-Za-z]{2,5}' README.md; then
-          echo "✅ LOST format is valid in README.md"
+          echo "🔍 Checking LOST lines in README.md..."
+
+          # Extract all lines containing "LOST:" (case-insensitive)
+          grep -i 'LOST:' README.md || true > lost_lines.txt
+
+          # Define the correct format regex
+          VALID_REGEX='^LOST:\s~?((\d{1,3}(,\d{3})+)|(\d+(\.\d+)?[KMB]?))\s[A-Za-z]{2,5}$'
+
+          INVALID_FOUND=0
+
+          while IFS= read -r line; do
+            if echo "$line" | grep -Eq "$VALID_REGEX"; then
+              echo "✅ Valid: $line"
+            else
+              echo "❌ Invalid: $line"
+
+              # Custom rule feedback
+              if ! echo "$line" | grep -q -E '\s[A-Za-z]{2,5}$'; then
+                echo "   ⛔ Missing or malformed currency code (should be like 'USD' or 'eth')"
+              fi
+              if ! echo "$line" | grep -q -E '\d{1,3}(,\d{3})+' && ! echo "$line" | grep -q -E '\d+(\.\d+)?[KMB]?'; then
+                echo "   ⛔ Invalid number format (use comma separators or K/M/B suffixes)"
+              fi
+              if ! echo "$line" | grep -q -E '^\s*LOST:'; then
+                echo "   ⛔ Line must start with 'LOST:'"
+              fi
+
+              INVALID_FOUND=1
+            fi
+          done < lost_lines.txt
+
+          if [ "$INVALID_FOUND" -eq 1 ]; then
+            echo ""
+            echo "🚫 Some LOST lines are incorrectly formatted. Please follow the style guide:"
+            echo "  • LOST: 1,000 USD"
+            echo "  • LOST: ~2.5M ETH"
+            echo "  • LOST: 8K eur"
+            exit 1
           else
-          echo "❌ LOST line is incorrectly formatted."
-          echo "Expected format examples: LOST: 1,000 USD | LOST: 5,000.75 eth"
-          echo "1. Use '.' for decimals  2. Use ',' as a thousand separator  3. Include currency codes"
-          exit 1
+            echo "🎉 All LOST lines are valid."
           fi

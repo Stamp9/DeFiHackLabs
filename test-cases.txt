@@ -1,0 +1,20 @@
+# ✅ Valid cases
+LOST: 1,000 USD
+LOST: 5,000.25 ETH
+LOST: ~2.16M BUSD
+LOST: 8K usd
+LOST: 12.5B EUR
+LOST: ~3,000 BTC
+LOST: 1,200.00 DAI
+
+# ❌ Invalid cases
+LOST: 1000USD
+LOST: 1.000,50 USD
+LOST: ~2.5million USD
+LOST: 500 usdollars
+LOST: 1200
+LOST: 1,000
+Lost: 1,000 usd
+LOST: ~1.2K
+LOSS: 1,000 USD
+LOST: 5,00.25 ETH
