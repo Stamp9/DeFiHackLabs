@@ -23,7 +23,7 @@ jobs:
             exit 1
           fi
 
-          VALID_REGEX='^LOST:\s~?((\d{1,3}(,\d{3})+)|(\d+(\.\d+)?[KMB]?))\s[A-Za-z]{2,5}$'
+          VALID_REGEX='^LOST:\s~?(\d{1,3}(,\d{3})+|\d+(\.\d+)?([KMB])?)\s[A-Za-z]{2,5}$'
 
           echo ""
           echo "📋 Test Results:"
