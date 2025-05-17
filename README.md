@@ -1234,9 +1234,19 @@ If you appreciate our work, please consider donating. Even a small amount helps 
 ---
 
 ### List of DeFi Hacks & POCs
-### Lost: ~2.16M BUSD
+### 20250318 DCFToken - Lack of Slippage Protection
 
-### Lost: ~2.16 M BUSD
+### Lost: ~442k
+
+
+```sh
+forge test --contracts ./src/test/2025-03/DCFToken_exp.sol -vvv --evm-version shanghai
+```
+#### Contract
+[DCFToken_exp.sol](src/test/2025-03/DCFToken_exp.sol)
+### Link reference
+
+https://x.com/Phalcon_xyz/status/1860890801909190664
 
 
 ### 20250511 x
